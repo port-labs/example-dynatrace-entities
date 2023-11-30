@@ -85,7 +85,12 @@ def process_dynatrace_entities(entities_data: list[dict[str, Any]]):
                 "type": entity["type"],
                 "tags": entity["tags"],
                 "last_seen": convert_to_datetime(entity["lastSeenTms"]),
-                "first_seen": convert_to_datetime(entity["firstSeenTms"])
+                "first_seen": convert_to_datetime(entity["firstSeenTms"]),
+                "properties": entity["properties"],
+                "management_zones": entity["managementZones"],
+                "from_relationships": entity["fromRelationships"],
+                "to_relationships": entity["toRelationships"]
+
             },
             "relations": {}
         }
@@ -106,7 +111,7 @@ if __name__ == "__main__":
         logger.info(f"Paginating request to {entity_type}")
         params: dict[str, Any] = {
             "entitySelector": f"type({entity_type})",
-            "fields": "firstSeenTms,lastSeenTms,tags"
+            "fields": "firstSeenTms,lastSeenTms,tags,properties,managementZones,fromRelationships,toRelationships"
         }
 
         for entities_batch in get_paginated_resource(params=params):

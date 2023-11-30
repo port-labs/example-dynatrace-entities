@@ -34,6 +34,26 @@ Create the dynatrace entity blueprint in Port using this schema:
         "title": "First Seen",
         "type": "string",
         "format": "date-time"
+      },
+      "to_relationships": {
+        "title": "To Relationships",
+        "type": "object",
+        "description": "A list of relationships where the entity occupies the TO position"
+      },
+      "properties": {
+        "title": "Properties",
+        "description": "A list of additional properties of the entity",
+        "type": "object"
+      },
+      "from_relationships": {
+        "title": "From Relationships",
+        "description": "A list of relationships where the entity occupies the FROM position",
+        "type": "object"
+      },
+      "management_zones": {
+        "title": "Management Zones",
+        "description": "A set of management zones to which the entity belongs",
+        "type": "array"
       }
     },
     "required": []
