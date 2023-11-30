@@ -3,7 +3,7 @@
 
 ## Getting started
 
-In this example you will create a`dynatrace_entity` blueprint that ingests monitored entities from your Dynatrace account. You will then add some python script to make API calls to Dynatrace REST API and fetch data for your account.
+In this example you will create a `dynatrace_entity` blueprint that ingests monitored entities from your Dynatrace account. You will then add some python script to make API calls to Dynatrace REST API and fetch data for your account.
 
 ## Entity Blueprint
 Create the dynatrace entity blueprint in Port using this schema:
