@@ -13,8 +13,9 @@ PORT_CLIENT_ID = config("PORT_CLIENT_ID")
 PORT_CLIENT_SECRET = config("PORT_CLIENT_SECRET")
 DYNATRACE_API_KEY = config("DYNATRACE_API_KEY")
 DYNATRACE_HOST_URL = config("DYNATRACE_HOST_URL")
+DYNATRACE_ENTITY_SELECTORS = config("DYNATRACE_ENTITY_SELECTOR", default=None)
 PORT_API_URL = "https://api.getport.io/v1"
-
+DEFAULT_ENTITY_TYPES = {"KUBERNETES_SERVICE", "DATASTORE", "APPLICATION", "HOST", "SERVICE"}
 
 ## Get Port Access Token
 credentials = {'clientId': PORT_CLIENT_ID, 'clientSecret': PORT_CLIENT_SECRET}
@@ -60,10 +61,8 @@ def get_paginated_resource(params: dict[str, Any] = None, page_size: int = 5):
             batch_data = page_json["entities"]
             yield batch_data
             
-            # Check for next page start in response
             next_page_key = page_json.get("nextPageKey")
 
-            # Break the loop if there is no more data
             if not next_page_key:
                 break
         except requests.exceptions.HTTPError as e:
@@ -95,7 +94,14 @@ def process_dynatrace_entities(entities_data: list[dict[str, Any]]):
 
 
 if __name__ == "__main__":
-    entity_types = ["HOST","KUBERNETES_SERVICE"]
+    # Check if DYNATRACE_ENTITY_SELECTOR is not None before splitting
+    if DYNATRACE_ENTITY_SELECTORS is not None:
+        user_entity_types = set(DYNATRACE_ENTITY_SELECTORS.split(","))
+    else:
+        user_entity_types = set()
+
+    entity_types = DEFAULT_ENTITY_TYPES.union(user_entity_types)
+
     for entity_type in entity_types:
         logger.info(f"Paginating request to {entity_type}")
         params: dict[str, Any] = {
@@ -104,5 +110,5 @@ if __name__ == "__main__":
         }
 
         for entities_batch in get_paginated_resource(params=params):
+            logger.info(f"Received batch with size {len(entities_batch)} {entity_type} ")
             process_dynatrace_entities(entities_data=entities_batch)
-
